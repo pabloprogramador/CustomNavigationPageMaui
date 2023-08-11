@@ -1,0 +1,31 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio Version 16
+VisualStudioVersion = 25.0.1706.1
+MinimumVisualStudioVersion = 10.0.40219.1
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "CustomNavigationPageMaui.Sample", "CustomNavigationPageMaui.Sample\CustomNavigationPageMaui.Sample.csproj", "{6CC1175D-77BF-412D-8CCC-52EE6EF44565}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "src", "src\src.csproj", "{CCFDECDE-D388-449E-BAE8-B76415B672BA}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{6CC1175D-77BF-412D-8CCC-52EE6EF44565}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{6CC1175D-77BF-412D-8CCC-52EE6EF44565}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{6CC1175D-77BF-412D-8CCC-52EE6EF44565}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{6CC1175D-77BF-412D-8CCC-52EE6EF44565}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CCFDECDE-D388-449E-BAE8-B76415B672BA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CCFDECDE-D388-449E-BAE8-B76415B672BA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CCFDECDE-D388-449E-BAE8-B76415B672BA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CCFDECDE-D388-449E-BAE8-B76415B672BA}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {09DE4C29-7975-4334-9C9E-60816C3E8817}
+	EndGlobalSection
+EndGlobal

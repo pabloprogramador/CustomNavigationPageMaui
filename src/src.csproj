@@ -20,4 +20,18 @@
 	<PropertyGroup Condition="'$(Configuration)|$(TargetFramework)|$(Platform)'=='Debug|net7.0-ios|AnyCPU'">
 	  <CreatePackage>false</CreatePackage>
 	</PropertyGroup>
+	<ItemGroup>
+	  <None Remove="Platforms\MacCatalyst\" />
+	  <None Remove="Platforms\Tizen\" />
+	  <None Remove="Platforms\Windows\" />
+	  <None Remove="Platforms\Android\" />
+	  <None Remove="Platforms\iOS\" />
+	</ItemGroup>
+	<ItemGroup>
+	  <Folder Include="Platforms\MacCatalyst\" />
+	  <Folder Include="Platforms\Tizen\" />
+	  <Folder Include="Platforms\Windows\" />
+	  <Folder Include="Platforms\Android\" />
+	  <Folder Include="Platforms\iOS\" />
+	</ItemGroup>
 </Project>

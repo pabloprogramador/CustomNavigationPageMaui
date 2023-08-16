@@ -4,14 +4,18 @@
              x:Class="CustomNavigationPageMaui.Sample.Pages.MainPage"
              Title="MainPage">
     <Grid BackgroundColor="Orange">
-        <VerticalStackLayout BackgroundColor="Yellow" VerticalOptions="Center" Spacing="20" Margin="30">
+        <VerticalStackLayout VerticalOptions="Center" Spacing="20" Margin="30">
             <Label 
             Text="Welcome to .NET MAUI!"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
-            <Button Text="Page1 Fade / Fade" Clicked="FadeClicked" />
-            <Button Text="Page2" />
-            <Button Text="Page3" />
+            <Button Text="Fade / Fade" Clicked="FadeClicked" />
+            <Button Text="Left / Right" Clicked="LeftClicked" />
+            <Button Text="Top / Bottom" Clicked="TopClicked" />
+            <Button Text="Flip" Clicked="FlipClicked" />
+            <Button Text="Scale" Clicked="ScaleClicked" />
+            <Button Text="None" Clicked="NoneClicked" />
+            <Button Text="Default" Clicked="DefaultClicked" />
         </VerticalStackLayout>
     </Grid>
 </ContentPage>

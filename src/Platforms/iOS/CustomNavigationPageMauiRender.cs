@@ -75,8 +75,8 @@ namespace src.Platforms.iOS
 
         protected override Task<bool> OnPopViewAsync(Page page, bool animated)
         {
-            //return base.OnPopViewAsync(page, animated);
-            return null;
+            return base.OnPopViewAsync(page, animated);
+           // return null;
         }
 
         public override UIViewController PopViewController(bool animated)

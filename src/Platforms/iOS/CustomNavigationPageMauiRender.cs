@@ -73,10 +73,11 @@ namespace src.Platforms.iOS
             base.PushViewController(viewController, false);
         }
 
+       
         protected override Task<bool> OnPopViewAsync(Page page, bool animated)
         {
-            return base.OnPopViewAsync(page, animated);
-           // return null;
+            PopViewController(animated);
+            return null;   
         }
 
         public override UIViewController PopViewController(bool animated)

@@ -8,10 +8,12 @@
             <Label 
             Text="CUSTOM NAVIGATON PAGE .NET MAUI!"
              FontSize="28"
+                HorizontalTextAlignment="Center"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
             <Label 
             Text="ANIMATIONS"
+                HorizontalTextAlignment="Center"
             FontAttributes="Bold"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />

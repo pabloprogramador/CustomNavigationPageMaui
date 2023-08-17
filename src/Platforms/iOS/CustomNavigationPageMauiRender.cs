@@ -15,11 +15,9 @@ namespace src.Platforms.iOS
     public class CustomNavigationPageMauiRender : NavigationRenderer
     {
 
-        public override async void PushViewController(UIViewController viewController, bool animated)
+        public override void PushViewController(UIViewController viewController, bool animated)
         {
-            // base.BeginAppearanceTransition(false, false);
-
-
+            
             if (NavConfig.Starting == TransitionType.None)
             {
                 base.PushViewController(viewController, false);
@@ -73,6 +71,12 @@ namespace src.Platforms.iOS
                 View.Layer.AddAnimation(transition, null);
             }
             base.PushViewController(viewController, false);
+        }
+
+        protected override Task<bool> OnPopViewAsync(Page page, bool animated)
+        {
+            //return base.OnPopViewAsync(page, animated);
+            return null;
         }
 
         public override UIViewController PopViewController(bool animated)

@@ -11,7 +11,7 @@
                 HorizontalTextAlignment="Center"
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
-        </VerticalStackLayout>
            <Button Text="VOLTAR" Clicked="Button_Clicked" />
+        </VerticalStackLayout>
     </Grid>
 </ContentPage>

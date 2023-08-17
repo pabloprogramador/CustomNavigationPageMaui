@@ -17,9 +17,9 @@ namespace src.Platforms.iOS
 
         public override async void PushViewController(UIViewController viewController, bool animated)
         {
-           // base.BeginAppearanceTransition(false, false);
-           
-            
+            // base.BeginAppearanceTransition(false, false);
+
+
             if (NavConfig.Starting == TransitionType.None)
             {
                 base.PushViewController(viewController, false);
@@ -32,11 +32,11 @@ namespace src.Platforms.iOS
             }
             else if (NavConfig.Starting == TransitionType.Fade)
             {
-                
+
                 var transition = CATransition.CreateAnimation();
                 transition.Duration = NavConfig.Duration;
                 transition.Type = CAAnimation.TransitionFade;
-                
+
                 View.Layer.AddAnimation(transition, null);
             }
             else if (NavConfig.Starting == TransitionType.Flip)
@@ -50,10 +50,10 @@ namespace src.Platforms.iOS
             else
             {
                 var transition = CATransition.CreateAnimation();
-                
+
                 transition.Duration = NavConfig.Duration;
                 transition.Type = CAAnimation.TransitionMoveIn;
-                
+
                 switch (NavConfig.Starting)
                 {
                     case TransitionType.SlideFromBottom:
@@ -71,7 +71,7 @@ namespace src.Platforms.iOS
                 }
 
                 View.Layer.AddAnimation(transition, null);
-            } 
+            }
             base.PushViewController(viewController, false);
         }
 
@@ -159,14 +159,14 @@ namespace src.Platforms.iOS
             //view.SetNeedsDisplay();
             //base.NavigationController.View.Hidden = true;
 
-           // var topVC = GetTopViewController();
+            // var topVC = GetTopViewController();
             //view.BringSubviewToFront(topVC.View);
             // base.WillMoveToParentViewController(view.InputViewController);
             //var topVC = UIApplication.SharedApplication.KeyWindow.RootViewController;
             //var xview = ViewController.View;
             //if (xview != null) xview.Hidden = true;
             //view.Superview.Layer.Sublayers[1].Hidden = true;
-            
+
 
             //view.Superview.Superview.Layer.Sublayers[0].Sublayers[0].Sublayers[3].Transform = CATransform3D.MakeTranslation((nfloat)0, (nfloat)300, (nfloat)0); ;
             //view.Superview.Superview.Layer.Transform = CATransform3D.MakeTranslation((nfloat)0, (nfloat)300, (nfloat)0); ;
@@ -177,21 +177,14 @@ namespace src.Platforms.iOS
             transition.Duration = NavConfig.Duration;
             transition.Type = CAAnimation.TransitionMoveIn;
             transition.Subtype = CAAnimation.TransitionFromRight;
-            //transition.RemovedOnCompletion = true;
-            
-            //transition.Subtype = CAAnimation.TransitionFromLeft;
             transition.StartProgress = (float)0.5;
             transition.EndProgress = (float)0.5;
             View.Layer.AddAnimation(transition, null);
 
-            
-            //view.BringSubviewToFront(view);
-            //var anim = new CAAnimation();
-            //anim.
             var m34 = (nfloat)(-1 * 0.001);
             var initialTransform = CATransform3D.Identity;
             initialTransform.M34 = m34;
-            
+
             initialTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, -2.0f, 0.0f);
             //initialTransform = initialTransform.Translate(0, 0, 0);
             // view.Alpha = 0.0f;
@@ -200,14 +193,14 @@ namespace src.Platforms.iOS
             //view.Layer.Sublayers[0].Transform
             view.BackgroundColor = Colors.Transparent.ToPlatform();
             view.Subviews[0].Transform = CGAffineTransform.MakeTranslation((nfloat)100, (nfloat)0);
-                //CATransform3D.MakeTranslation((nfloat)100, (nfloat)0, (nfloat)0);
+            //CATransform3D.MakeTranslation((nfloat)100, (nfloat)0, (nfloat)0);
 
             //view.ExchangeSubview(0, 1);
             UIView.Animate(NavConfig.Duration, () =>
             {
                 // view.AwakeFromNib();
 
-               // view.Layer.Sublayers[0].Sublayers[1].Transform = CATransform3D.MakeTranslation((nfloat)0, (nfloat)0, (nfloat)0);
+                // view.Layer.Sublayers[0].Sublayers[1].Transform = CATransform3D.MakeTranslation((nfloat)0, (nfloat)0, (nfloat)0);
             });
             //UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
             //    () =>
@@ -223,46 +216,50 @@ namespace src.Platforms.iOS
 
         }
 
-
-        public static UIViewController? GetTopViewController()
+        private void FixToStart(UIView view, double duration = 0.5)
         {
-            var window = UIApplication.SharedApplication
-                .ConnectedScenes
-                .ToArray()
-                .OfType<UIWindowScene>()
-                .SelectMany(scene => scene.Windows)
-                .FirstOrDefault(window => window.IsKeyWindow);
-            //var window = UIApplication.SharedApplication.GetKeyWindow();
-            var vc = window?.RootViewController;
-            while (vc is { PresentedViewController: { } })
-                vc = vc.PresentedViewController;
+            var transition = CATransition.CreateAnimation();
 
-            if (vc is UINavigationController { ViewControllers: { } } navController)
-                vc = navController.ViewControllers.Last();
+            transition.Duration = duration;
+            transition.Type = CAAnimation.TransitionMoveIn;
+            transition.Subtype = CAAnimation.TransitionFromRight;
+            transition.StartProgress = (float)0.5;
+            transition.EndProgress = (float)0.5;
+            View.Layer.AddAnimation(transition, null);
+            view.BackgroundColor = Colors.Transparent.ToPlatform();
+            view.ClipsToBounds = false;
 
-            return vc;
+            var fixAnimation = CABasicAnimation.FromKeyPath("transform.translation.x");
+            fixAnimation.From = Foundation.NSNumber.FromDouble(-view.Bounds.Width / 2);
+            fixAnimation.To = Foundation.NSNumber.FromDouble(-view.Bounds.Width / 2);
+            fixAnimation.Duration = duration;
+            fixAnimation.AnimationStopped += (sender, e) =>
+            {
+                view.Layer.Transform = CATransform3D.MakeTranslation(0, 0, 0);
+            };
+            view.Layer.AddAnimation(fixAnimation, null);
         }
-
-        
-
 
         private void ScaleAnimation(UIView view, double duration = 0.5)
         {
-            var transition = CATransition.CreateAnimation();
-            transition.Duration = NavConfig.Duration;
-            transition.Type = CAAnimation.TransitionReveal;
-            transition.Subtype = CAAnimation.TransitionFade;
-            View.Layer.AddAnimation(transition, null);
 
-            view.Transform = CGAffineTransform.MakeScale((nfloat)1.5, (nfloat)1.5);
-          
+            FixToStart(view, duration);
+
+            view.Layer.Opacity = 0;
+            view.Subviews[0].Transform = CGAffineTransform.MakeScale((nfloat).5, (nfloat).5);
+            view.Subviews[1].Layer.Opacity = 0;
+
             UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
                 () =>
                 {
-                    view.Transform = CGAffineTransform.MakeScale((nfloat)1.0, (nfloat)1.0);
+                    view.Subviews[0].Transform = CGAffineTransform.MakeScale((nfloat)1, (nfloat)1);
+                    view.Subviews[1].Layer.Opacity = 1;
+                    view.Layer.Opacity = 1;
                 },
                 null
             );
         }
+
+
     }
 }

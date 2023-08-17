@@ -6,4 +6,9 @@ public partial class NewPage1 : ContentPage
 	{
 		InitializeComponent();
 	}
+
+    void Button_Clicked(System.Object sender, System.EventArgs e)
+    {
+		App.Current.MainPage.Navigation.PopAsync();
+    }
 }

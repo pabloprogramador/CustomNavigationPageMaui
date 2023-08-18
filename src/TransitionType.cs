@@ -20,30 +20,40 @@ public enum TransitionType
     /// <summary>
     /// Show a flip transition animation.
     /// </summary>
-    Flip = 2,
+    FlipIn = 2,
+
+    /// <summary>
+    /// Show a flip transition animation.
+    /// </summary>
+    FlipOut = 3,
 
     /// <summary>
     /// Show a scale transition animation.
     /// </summary>
-    Scale = 3,
+    ScaleIn = 4,
+
+    /// <summary>
+    /// Show a scale transition animation.
+    /// </summary>
+    ScaleOut = 5,
 
     /// <summary>
     /// Show a slide form left transition animation.
     /// </summary>
-    SlideFromLeft = 4,
+    SlideFromLeft = 6,
 
     /// <summary>
     /// Show a slide form right transition animation.
     /// </summary>
-    SlideFromRight = 5,
+    SlideFromRight = 7,
 
     /// <summary>
     /// Show a slide form top transition animation.
     /// </summary>
-    SlideFromTop = 6,
+    SlideFromTop = 8,
 
     /// <summary>
     /// Show a slide form bottom transition animation.
     /// </summary>
-    SlideFromBottom = 7
+    SlideFromBottom = 9
 }

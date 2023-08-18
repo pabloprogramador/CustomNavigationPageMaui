@@ -7,52 +7,69 @@ using Microsoft.Maui;
 using Microsoft.Maui.Controls.Shapes;
 using System.Collections.Generic;
 using Microsoft.Maui.Platform;
+using Microsoft.Maui.Controls;
+using Foundation;
+using CoreAudioKit;
 //using Xamarin.Forms;
 //using Xamarin.Forms.Platform.iOS;
 
 namespace src.Platforms.iOS
 {
+
     public class CustomNavigationPageMauiRender : NavigationRenderer
     {
+        private UIView _previousBarView;
+        private UIView _previousContentView;
 
         public override void PushViewController(UIViewController viewController, bool animated)
         {
-            
-            if (NavConfig.Starting == TransitionType.None)
+
+            _previousBarView = View.Subviews[1].SnapshotView(false);
+            _previousContentView = View.Subviews[0].SnapshotView(false);
+
+            if (Nav.Config.Starting == TransitionType.None)
             {
                 base.PushViewController(viewController, false);
                 return;
             }
-            else if (NavConfig.Starting == TransitionType.Default)
+            else if (Nav.Config.Starting == TransitionType.Default)
             {
                 base.PushViewController(viewController, animated);
                 return;
             }
-            else if (NavConfig.Starting == TransitionType.Fade)
+            else if (Nav.Config.Starting == TransitionType.Fade)
             {
 
                 var transition = CATransition.CreateAnimation();
-                transition.Duration = NavConfig.Duration;
+                transition.Duration = Nav.Config.Duration;
                 transition.Type = CAAnimation.TransitionFade;
 
                 View.Layer.AddAnimation(transition, null);
             }
-            else if (NavConfig.Starting == TransitionType.Flip)
+            else if (Nav.Config.Starting == TransitionType.FlipIn)
             {
-                FlipAnimation(View, NavConfig.Duration);
+                FlipInAnimation(View, Nav.Config.Duration);
             }
-            else if (NavConfig.Starting == TransitionType.Scale)
+            else if (Nav.Config.Starting == TransitionType.FlipOut)
             {
-                ScaleAnimation(View, NavConfig.Duration);
+                FlipOutAnimation(View, Nav.Config.Duration);
+            }
+            else if (Nav.Config.Starting == TransitionType.ScaleIn)
+            {
+                ScaleInAnimation(View, Nav.Config.Duration);
+            }
+            else if (Nav.Config.Starting == TransitionType.ScaleOut)
+            {
+                ScaleOutAnimation(View, Nav.Config.Duration);
             }
             else
             {
                 var transition = CATransition.CreateAnimation();
 
-                transition.Duration = NavConfig.Duration;
+                transition.Duration = Nav.Config.Duration;
                 transition.Type = CAAnimation.TransitionMoveIn;
 
-                switch (NavConfig.Starting)
+                switch (Nav.Config.Starting)
                 {
                     case TransitionType.SlideFromBottom:
                         transition.Subtype = CAAnimation.TransitionFromBottom;
@@ -70,48 +87,60 @@ namespace src.Platforms.iOS
 
                 View.Layer.AddAnimation(transition, null);
             }
+
             base.PushViewController(viewController, false);
         }
 
-       
+
         protected override Task<bool> OnPopViewAsync(Page page, bool animated)
         {
             PopViewController(animated);
-            return null;   
+            return null;
         }
 
         public override UIViewController PopViewController(bool animated)
         {
-            if (NavConfig.Finished == TransitionType.None)
+            _previousBarView = View.Subviews[1].SnapshotView(false);
+            _previousContentView = View.Subviews[0].SnapshotView(false);
+
+            if (Nav.Config.Finished == TransitionType.None)
             {
                 return base.PopViewController(false);
             }
-            if (NavConfig.Finished == TransitionType.Default)
+            if (Nav.Config.Finished == TransitionType.Default)
             {
                 return base.PopViewController(animated);
             }
-            if (NavConfig.Finished == TransitionType.Fade)
+            if (Nav.Config.Finished == TransitionType.Fade)
             {
                 var transition = CATransition.CreateAnimation();
-                transition.Duration = NavConfig.Duration;
+                transition.Duration = Nav.Config.Duration;
                 transition.Type = CAAnimation.TransitionFade;
                 View.Layer.AddAnimation(transition, null);
             }
-            else if (NavConfig.Finished == TransitionType.Flip)
+            else if (Nav.Config.Finished == TransitionType.FlipIn)
             {
-                FlipAnimation(View, NavConfig.Duration);
+                FlipInAnimation(View, Nav.Config.Duration);
             }
-            else if (NavConfig.Finished == TransitionType.Scale)
+            else if (Nav.Config.Finished == TransitionType.FlipOut)
             {
-                ScaleAnimation(View, NavConfig.Duration);
+                FlipOutAnimation(View, Nav.Config.Duration);
+            }
+            else if (Nav.Config.Finished == TransitionType.ScaleIn)
+            {
+                ScaleInAnimation(View, Nav.Config.Duration);
+            }
+            else if (Nav.Config.Finished == TransitionType.ScaleOut)
+            {
+                ScaleOutAnimation(View, Nav.Config.Duration);
             }
             else
             {
                 var transition = CATransition.CreateAnimation();
-                transition.Duration = NavConfig.Duration;
+                transition.Duration = Nav.Config.Duration;
                 transition.Type = CAAnimation.TransitionPush;
 
-                switch (NavConfig.Finished)
+                switch (Nav.Config.Finished)
                 {
                     case TransitionType.SlideFromBottom:
                         transition.Subtype = CAAnimation.TransitionFromBottom;
@@ -147,78 +176,115 @@ namespace src.Platforms.iOS
         //    );
         //}
 
-        public async void FlipAnimation(UIView view, double duration = 0.5)
+
+
+        public void FlipInAnimation(UIView view, double duration = 0.5)
         {
-            //CALayer layer0 = view.Layer.Sublayers[0];
-            //CALayer layer1 = view.Layer.Sublayers[1];
 
-
-            //view.Layer.InsertSublayer(layer1, 0);
-            //view.Layer.InsertSublayer(layer0, 1);
-
-            //view.SetNeedsDisplay();
-            //view.Superview.Superview.L.Transform = CATransform3D.MakeTranslation((nfloat)0, (nfloat)300, (nfloat)0);
-            //view.Superview.Superview.BringSubviewToFront(view);
-
-            //view.Superview.ExchangeSubview(0, 2);
-            //view.SetNeedsDisplay();
-            //base.NavigationController.View.Hidden = true;
-
-            // var topVC = GetTopViewController();
-            //view.BringSubviewToFront(topVC.View);
-            // base.WillMoveToParentViewController(view.InputViewController);
-            //var topVC = UIApplication.SharedApplication.KeyWindow.RootViewController;
-            //var xview = ViewController.View;
-            //if (xview != null) xview.Hidden = true;
-            //view.Superview.Layer.Sublayers[1].Hidden = true;
-
-
-            //view.Superview.Superview.Layer.Sublayers[0].Sublayers[0].Sublayers[3].Transform = CATransform3D.MakeTranslation((nfloat)0, (nfloat)300, (nfloat)0); ;
-            //view.Superview.Superview.Layer.Transform = CATransform3D.MakeTranslation((nfloat)0, (nfloat)300, (nfloat)0); ;
-            //view.Superview.Subviews[0].Transform =
-            //_ = view.Superview.Subviews;
-
-            var transition = CATransition.CreateAnimation();
-            transition.Duration = NavConfig.Duration;
-            transition.Type = CAAnimation.TransitionMoveIn;
-            transition.Subtype = CAAnimation.TransitionFromRight;
-            transition.StartProgress = (float)0.5;
-            transition.EndProgress = (float)0.5;
-            View.Layer.AddAnimation(transition, null);
+            FixToStart(view, duration);
 
             var m34 = (nfloat)(-1 * 0.001);
             var initialTransform = CATransform3D.Identity;
             initialTransform.M34 = m34;
+            initialTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, 1.0f, 0.0f);
 
-            initialTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, -2.0f, 0.0f);
-            //initialTransform = initialTransform.Translate(0, 0, 0);
-            // view.Alpha = 0.0f;
-            // view.Layer.AnchorPoint = new CGPoint(2, 0.5);
-            //view.Layer.Transform = initialTransform;
-            //view.Layer.Sublayers[0].Transform
-            view.BackgroundColor = Colors.Transparent.ToPlatform();
-            view.Subviews[0].Transform = CGAffineTransform.MakeTranslation((nfloat)100, (nfloat)0);
-            //CATransform3D.MakeTranslation((nfloat)100, (nfloat)0, (nfloat)0);
+            //view.Alpha = 0.0f;
+            view.Subviews[0].Layer.Transform = initialTransform;
+            //view.Subviews[1].Layer.Opacity = 0;
+            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
+                () =>
+                {
+                    view.Subviews[0].Layer.AnchorPoint = new CGPoint(.5f, 0.5f);
+                    var newTransform = CATransform3D.Identity;
+                    newTransform.M34 = m34;
+                    view.Subviews[0].Layer.Transform = newTransform;
+                    //view.Subviews[1].Layer.Opacity = 1;
+                },
+                null
+            );
+        }
 
-            //view.ExchangeSubview(0, 1);
-            UIView.Animate(NavConfig.Duration, () =>
-            {
-                // view.AwakeFromNib();
+        public void FlipOutAnimation(UIView view, double duration = 0.5)
+        {
 
-                // view.Layer.Sublayers[0].Sublayers[1].Transform = CATransform3D.MakeTranslation((nfloat)0, (nfloat)0, (nfloat)0);
-            });
-            //UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
-            //    () =>
-            //    {
-            //        view.Layer.AnchorPoint = new CGPoint((nfloat)0, 0.5f);
-            //        var newTransform = CATransform3D.Identity;
-            //        newTransform.M34 = m34;
-            //        view.Layer.Transform = newTransform;
-            //       // view.Alpha = 1.0f;
-            //    },
-            //    null
-            //);
+            FixToStart(view, duration);
 
+            //view.AddSubview(_previousBarView);
+            view.AddSubview(_previousContentView);
+
+            var m34 = (nfloat)(-1 * 0.001);
+            var initialTransform = CATransform3D.Identity;
+            initialTransform.M34 = m34;
+            
+            //initialTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, -1.0f, 0.0f);
+
+            //_previousBarView.Layer.Opacity = 1;
+            _previousContentView.Layer.Transform = initialTransform;
+            _previousContentView.Layer.ZPosition = 999;
+            _previousContentView.Layer.AnchorPoint = new CGPoint(1f, .5f);
+            _previousContentView.Layer.Transform = CATransform3D.MakeTranslation(_previousContentView.Bounds.Width / 2, 0, 0);
+
+            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
+                () =>
+                {
+                    var newTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, 1.0f, 0.0f);
+                    //newTransform.Translate((nfloat)_previousContentView.Bounds.Width / 2, 0, 0);
+                    newTransform.M34 = m34;
+                   // _previousBarView.Layer.Opacity = 0;
+                    _previousContentView.Layer.Transform = newTransform;
+                    _previousContentView.Layer.Transform = CATransform3D.MakeTranslation(_previousContentView.Bounds.Width / 2, 0, 0);
+                },
+                () =>
+                {
+                    //_previousBarView.RemoveFromSuperview();
+                    _previousContentView.RemoveFromSuperview();
+                }
+            );
+        }
+
+        private void ScaleInAnimation(UIView view, double duration = 0.5)
+        {
+
+            FixToStart(view, duration);
+
+            view.Layer.Opacity = 0;
+            view.Subviews[0].Transform = CGAffineTransform.MakeScale((nfloat)1.5, (nfloat)1.5);
+            view.Subviews[1].Layer.Opacity = 0;
+
+            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
+                () =>
+                {
+                    view.Subviews[0].Transform = CGAffineTransform.MakeScale((nfloat)1, (nfloat)1);
+                    view.Subviews[1].Layer.Opacity = 1;
+                    view.Layer.Opacity = 1;
+                },
+                null
+            );
+        }
+
+        private void ScaleOutAnimation(UIView view, double duration = 0.5)
+        {
+
+            FixToStart(view, duration);
+
+            view.AddSubview(_previousBarView);
+            view.AddSubview(_previousContentView);
+            _previousContentView.Layer.Opacity = 1;
+            _previousContentView.Transform = CGAffineTransform.MakeScale(1f, 1f);
+            _previousBarView.Layer.Opacity = 1;
+            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
+                () =>
+                {
+                    _previousContentView.Transform = CGAffineTransform.MakeScale(1.5f, 1.5f);
+                    _previousContentView.Layer.Opacity = 0;
+                    _previousBarView.Layer.Opacity = 0;
+                },
+                () =>
+                {
+                    _previousContentView.RemoveFromSuperview();
+                    _previousBarView.RemoveFromSuperview();
+                }
+            );
         }
 
         private void FixToStart(UIView view, double duration = 0.5)
@@ -230,7 +296,7 @@ namespace src.Platforms.iOS
             transition.Subtype = CAAnimation.TransitionFromRight;
             transition.StartProgress = (float)0.5;
             transition.EndProgress = (float)0.5;
-            View.Layer.AddAnimation(transition, null);
+            view.Layer.AddAnimation(transition, null);
             view.BackgroundColor = Colors.Transparent.ToPlatform();
             view.ClipsToBounds = false;
 
@@ -245,26 +311,6 @@ namespace src.Platforms.iOS
             view.Layer.AddAnimation(fixAnimation, null);
         }
 
-        private void ScaleAnimation(UIView view, double duration = 0.5)
-        {
-
-            FixToStart(view, duration);
-
-            view.Layer.Opacity = 0;
-            view.Subviews[0].Transform = CGAffineTransform.MakeScale((nfloat).5, (nfloat).5);
-            view.Subviews[1].Layer.Opacity = 0;
-
-            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
-                () =>
-                {
-                    view.Subviews[0].Transform = CGAffineTransform.MakeScale((nfloat)1, (nfloat)1);
-                    view.Subviews[1].Layer.Opacity = 1;
-                    view.Layer.Opacity = 1;
-                },
-                null
-            );
-        }
-
-
     }
+
 }

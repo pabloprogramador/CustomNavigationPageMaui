@@ -10,57 +10,67 @@ public partial class MainPage : ContentPage
 
     void FadeClicked(System.Object sender, System.EventArgs e)
     {
+        Nav.Config.ResetConfig();
 		Nav.Config.Duration = .5;
-		Nav.Config.Starting = TransitionType.Fade;
-		Nav.Config.Finished = TransitionType.Fade;
+		Nav.Config.PushType = Nav.TransitionType.Fade;
+		Nav.Config.PopType = Nav.TransitionType.Fade;
 		App.Current.MainPage.Navigation.PushAsync(new NewPage1());
     }
 
     void TopClicked(System.Object sender, System.EventArgs e)
     {
+        Nav.Config.ResetConfig();
         Nav.Config.Duration = 1.5;
-        Nav.Config.Starting = TransitionType.SlideFromTop;
-        Nav.Config.Finished = TransitionType.SlideFromBottom;
+        Nav.Config.PushType = Nav.TransitionType.SlideTop;
+        Nav.Config.PopType = Nav.TransitionType.SlideTop;
         App.Current.MainPage.Navigation.PushAsync(new NewPage1());
     }
 
     void LeftClicked(System.Object sender, System.EventArgs e)
     {
-        Nav.Config.Duration = 1.5;
-        Nav.Config.Starting = TransitionType.SlideFromLeft;
-        Nav.Config.Finished = TransitionType.SlideFromRight;
+        Nav.Config.ResetConfig();
+        Nav.Config.Duration = .5;
+        Nav.Config.PushType = Nav.TransitionType.SlideRight;
+        Nav.Config.PushInputType = Nav.InputType.In;
+        Nav.Config.PopType = Nav.TransitionType.SlideLeft;
+        Nav.Config.PopInputType = Nav.InputType.Out;
+
         App.Current.MainPage.Navigation.PushAsync(new NewPage2());
     }
 
     void FlipClicked(System.Object sender, System.EventArgs e)
     {
+        Nav.Config.ResetConfig();
         Nav.Config.Duration = 1.5;
-        Nav.Config.Starting = TransitionType.FlipIn;
-        Nav.Config.Finished = TransitionType.FlipOut;
+        Nav.Config.PushType = Nav.TransitionType.Flip;
+        Nav.Config.PopType = Nav.TransitionType.Flip;
         App.Current.MainPage.Navigation.PushAsync(new NewPage3());
     }
 
     void ScaleClicked(System.Object sender, System.EventArgs e)
     {
+        Nav.Config.ResetConfig();
         Nav.Config.Duration = .5;
-        Nav.Config.Starting = TransitionType.ScaleIn;
-        Nav.Config.Finished = TransitionType.ScaleOut;
+        Nav.Config.PushType = Nav.TransitionType.Scale;
+        Nav.Config.PopType = Nav.TransitionType.Scale;
         App.Current.MainPage.Navigation.PushAsync(new NewPage1());
     }
 
     void NoneClicked(System.Object sender, System.EventArgs e)
     {
+        Nav.Config.ResetConfig();
         Nav.Config.Duration = 1.5;
-        Nav.Config.Starting = TransitionType.None;
-        Nav.Config.Finished = TransitionType.None;
+        Nav.Config.PushType = Nav.TransitionType.None;
+        Nav.Config.PopType = Nav.TransitionType.None;
         App.Current.MainPage.Navigation.PushAsync(new NewPage2());
     }
 
     void DefaultClicked(System.Object sender, System.EventArgs e)
     {
+        Nav.Config.ResetConfig();
         Nav.Config.Duration = 1.5;
-        Nav.Config.Starting = TransitionType.Default;
-        Nav.Config.Finished = TransitionType.Default;
+        Nav.Config.PushType = Nav.TransitionType.Default;
+        Nav.Config.PopType = Nav.TransitionType.Default;
         App.Current.MainPage.Navigation.PushAsync(new NewPage3());
     }
 }

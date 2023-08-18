@@ -18,7 +18,14 @@
             VerticalOptions="Center" 
             HorizontalOptions="Center" />
             <Button Text="Fade / Fade" Clicked="FadeClicked" />
-            <Button Text="Left / Right" Clicked="LeftClicked" />
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="5">
+                <Button Text="R In / R Out" Clicked="LeftClicked" />
+                <Button Grid.Column="1" Text="L Out / R Out" Clicked="Button_Clicked" />
+            </Grid>
+            <Grid ColumnDefinitions="*,*" ColumnSpacing="5">
+                <Button Grid.Column="0" Text="R Out / L In" Clicked="Button_Clicked_1" />
+                <Button Grid.Column="1" Text="R In / L In" Clicked="Button_Clicked_2" />
+            </Grid>
             <Button Text="Top / Bottom" Clicked="TopClicked" />
             <Button Text="Flip" Clicked="FlipClicked" />
             <Button Text="Scale" Clicked="ScaleClicked" />

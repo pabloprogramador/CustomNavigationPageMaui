@@ -18,14 +18,30 @@ namespace src.Platforms.iOS
 
     public class CustomNavigationPageMauiRender : NavigationRenderer
     {
-        private UIView _previousBarView;
         private UIView _previousContentView;
 
         public override void PushViewController(UIViewController viewController, bool animated)
         {
+            var mainPage = Application.Current.MainPage;
 
-            _previousBarView = View.Subviews[1].SnapshotView(false);
-            _previousContentView = View.Subviews[0].SnapshotView(false);
+            bool hasBar = true;
+
+            if (mainPage is NavigationPage navigationPage)
+            {
+                if (navigationPage.CurrentPage is ContentPage contentPage)
+                {
+                    hasBar = NavigationPage.GetHasNavigationBar(contentPage);
+                }
+            }
+
+            if (hasBar)
+            {
+                _previousContentView = View.Subviews[0].SnapshotView(false);
+            }
+            else
+            {
+                _previousContentView = View.SnapshotView(false);
+            }
 
             if (Nav.Config.PushType == Nav.TransitionType.None)
             {
@@ -79,7 +95,6 @@ namespace src.Platforms.iOS
 
         public override UIViewController PopViewController(bool animated)
         {
-            _previousBarView = View.Subviews[1].SnapshotView(false);
             _previousContentView = View.Subviews[0].SnapshotView(false);
 
             if (Nav.Config.PopType == Nav.TransitionType.None)
@@ -123,7 +138,7 @@ namespace src.Platforms.iOS
 
         private void Slide(UIView view, Nav.TransitionType transition, Nav.InputType input)
         {
-            if(input == Nav.InputType.In)
+            if (input == Nav.InputType.In)
             {
                 switch (transition)
                 {
@@ -143,23 +158,23 @@ namespace src.Platforms.iOS
             }
             else if (input == Nav.InputType.Out)
             {
-                switch (Nav.Config.PushType)
+                switch (transition)
                 {
                     case Nav.TransitionType.SlideBottom:
-                        SlideOutAnimation(view, Nav.Config.Duration, 0, -(float)View.Bounds.Height);
+                        SlideOutAnimation(view, Nav.Config.Duration, 0, (float)View.Bounds.Height);
                         break;
                     case Nav.TransitionType.SlideLeft:
-                        SlideOutAnimation(view, Nav.Config.Duration, (float)View.Bounds.Width, 0);
-                        break;
-                    case Nav.TransitionType.SlideRight:
                         SlideOutAnimation(view, Nav.Config.Duration, -(float)View.Bounds.Width, 0);
                         break;
+                    case Nav.TransitionType.SlideRight:
+                        SlideOutAnimation(view, Nav.Config.Duration, (float)View.Bounds.Width, 0);
+                        break;
                     case Nav.TransitionType.SlideTop:
-                        SlideOutAnimation(view, Nav.Config.Duration, 0, (float)View.Bounds.Height);
+                        SlideOutAnimation(view, Nav.Config.Duration, 0, -(float)View.Bounds.Height);
                         break;
                 }
             }
-            
+
         }
 
         private void SlideInAnimation(UIView view, double duration = 0.5, float pX = 0, float pY = 0)
@@ -182,23 +197,21 @@ namespace src.Platforms.iOS
         private void SlideOutAnimation(UIView view, double duration = 0.5, float pX = 0, float pY = 0)
         {
             FixToStart(view, duration);
-            
-            view.AddSubview(_previousBarView);
+
             view.AddSubview(_previousContentView);
 
             _previousContentView.Transform = CGAffineTransform.MakeTranslation(0, 0);
-            _previousBarView.Layer.Opacity = 1;
+            view.Subviews[1].Layer.Opacity = 0;
 
             UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
                 () =>
                 {
                     _previousContentView.Transform = CGAffineTransform.MakeTranslation(pX, pY);
-                    _previousBarView.Layer.Opacity = 0;
+                    view.Subviews[1].Layer.Opacity = 1;
                 },
                 () =>
                 {
                     _previousContentView.RemoveFromSuperview();
-                    _previousBarView.RemoveFromSuperview();
                 }
             );
         }
@@ -233,31 +246,28 @@ namespace src.Platforms.iOS
 
             FixToStart(view, duration);
 
-            view.AddSubview(_previousBarView);
             view.AddSubview(_previousContentView);
 
             var m34 = (nfloat)(-1 * 0.001);
             var initialTransform = CATransform3D.Identity;
             initialTransform.M34 = m34;
-            
-            _previousBarView.Layer.Opacity = 1;
+
+            view.Subviews[1].Layer.Opacity = 0;
             _previousContentView.Layer.Transform = initialTransform;
             _previousContentView.Layer.ZPosition = 999;
             _previousContentView.Layer.AnchorPoint = new CGPoint(.5f, .5f);
-            
 
             UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
                 () =>
                 {
                     var newTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, -1.0f, 0.0f);
                     newTransform.M34 = m34;
-                    _previousBarView.Layer.Opacity = 0;
                     _previousContentView.Layer.Transform = newTransform;
-                    
+                    view.Subviews[1].Layer.Opacity = 1;
+
                 },
                 () =>
                 {
-                    _previousBarView.RemoveFromSuperview();
                     _previousContentView.RemoveFromSuperview();
                 }
             );
@@ -288,22 +298,20 @@ namespace src.Platforms.iOS
 
             FixToStart(view, duration);
 
-            view.AddSubview(_previousBarView);
             view.AddSubview(_previousContentView);
             _previousContentView.Layer.Opacity = 1;
             _previousContentView.Transform = CGAffineTransform.MakeScale(1f, 1f);
-            _previousBarView.Layer.Opacity = 1;
+            view.Subviews[1].Layer.Opacity = 0;
             UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
                 () =>
                 {
                     _previousContentView.Transform = CGAffineTransform.MakeScale(1.5f, 1.5f);
                     _previousContentView.Layer.Opacity = 0;
-                    _previousBarView.Layer.Opacity = 0;
+                    view.Subviews[1].Layer.Opacity = 1;
                 },
                 () =>
                 {
                     _previousContentView.RemoveFromSuperview();
-                    _previousBarView.RemoveFromSuperview();
                 }
             );
         }

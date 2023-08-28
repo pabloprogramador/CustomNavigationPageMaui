@@ -20,6 +20,6 @@ namespace Plugins.CNPM
         public double RotationStart { get; set; } = 0;
         public double RotationEnd { get; set; } = 0;
 
-        public ScreenType ScreenSelected { get; set; } = ScreenType.Next;
+        public ScreenType SelectedForAnimation { get; set; } = ScreenType.NextPage;
     }
 }

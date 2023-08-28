@@ -11,6 +11,7 @@ using Microsoft.Maui.Controls;
 using Foundation;
 using CoreAudioKit;
 using Plugins.CNPM;
+using System.Runtime.InteropServices;
 
 namespace Plugins.CNPM.Platforms.iOS
 {
@@ -26,40 +27,11 @@ namespace Plugins.CNPM.Platforms.iOS
 
             PreviousContent();
 
-            if (Config.PushType == TransitionType.None)
-            {
-                base.PushViewController(viewController, false);
-                return;
-            }
-            else if (Config.PushType == TransitionType.Default)
-            {
-                base.PushViewController(viewController, animated);
-                return;
-            }
-            else if (Config.PushType == TransitionType.Fade)
-            {
-                CustomAnimation(View, Config.CustomPush);
-            }
-            else if (Config.PushType == TransitionType.Flip && Config.PushInputType == InputType.In)
-            {
-                FlipInAnimation(View, Config.Duration);
-            }
-            else if (Config.PushType == TransitionType.Flip && Config.PushInputType == InputType.Out)
-            {
-                FlipOutAnimation(View, Config.Duration);
-            }
-            else if (Config.PushType == TransitionType.Scale && Config.PushInputType == InputType.In)
-            {
-                ScaleInAnimation(View, Config.Duration);
-            }
-            else if (Config.PushType == TransitionType.Scale && Config.PushInputType == InputType.Out)
-            {
-                ScaleOutAnimation(View, Config.Duration);
-            }
-            else
-            {
-                Slide(View, Config.PushType, Config.PushInputType);
-            }
+            if (Config.CustomPush.SelectedForAnimation == ScreenType.CurrentPage)
+                CustomCurrentPageAnimation(View, Config.CustomPush);
+
+            if (Config.CustomPush.SelectedForAnimation == ScreenType.NextPage)
+                CustomNextPageAnimation(View, Config.CustomPush);
 
             base.PushViewController(viewController, false);
         }
@@ -81,231 +53,109 @@ namespace Plugins.CNPM.Platforms.iOS
             _isPush = false;
             PreviousContent();
 
-            if (Config.PopType == TransitionType.None)
-            {
-                return base.PopViewController(false);
-            }
-            if (Config.PopType == TransitionType.Default)
-            {
-                return base.PopViewController(animated);
-            }
-            if (Config.PopType == TransitionType.Fade)
-            {
-                //var transition = CATransition.CreateAnimation();
-                //transition.Duration = Config.Duration;
-                //transition.Type = CAAnimation.TransitionFade;
-                //View.Layer.AddAnimation(transition, null);
-                CustomAnimation(View, Config.CustomPush);
-            }
-            else if (Config.PopType == TransitionType.Flip && Config.PopInputType == InputType.In)
-            {
-                FlipInAnimation(View, Config.Duration);
-            }
-            else if (Config.PopType == TransitionType.Flip && Config.PopInputType == InputType.Out)
-            {
-                FlipOutAnimation(View, Config.Duration);
-            }
-            else if (Config.PopType == TransitionType.Scale && Config.PopInputType == InputType.In)
-            {
-                ScaleInAnimation(View, Config.Duration);
-            }
-            else if (Config.PopType == TransitionType.Scale && Config.PopInputType == InputType.Out)
-            {
-                ScaleOutAnimation(View, Config.Duration);
-            }
-            else
-            {
-                Slide(View, Config.PopType, Config.PopInputType);
-            }
+            if (Config.CustomPop.SelectedForAnimation == ScreenType.CurrentPage)
+                CustomCurrentPageAnimation(View, Config.CustomPop);
+
+            if (Config.CustomPop.SelectedForAnimation == ScreenType.NextPage)
+                CustomNextPageAnimation(View, Config.CustomPop);
 
             return base.PopViewController(false);
         }
 
-        private void Slide(UIView view, TransitionType transition, InputType input)
+        //TODO Talvez no futuro
+        //private void FlipInAnimation(UIView view, double duration = 0.5)
+        //{
+
+        //    FixToStart(view, duration);
+
+        //    var m34 = (nfloat)(-1 * 0.001);
+        //    var initialTransform = CATransform3D.Identity;
+        //    initialTransform.M34 = m34;
+        //    initialTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, 1.0f, 0.0f);
+
+        //    view.Subviews[0].Layer.Transform = initialTransform;
+        //    UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
+        //        () =>
+        //        {
+        //            view.Subviews[0].Layer.AnchorPoint = new CGPoint(.5f, 0.5f);
+        //            var newTransform = CATransform3D.Identity;
+        //            newTransform.M34 = m34;
+        //            view.Subviews[0].Layer.Transform = newTransform;
+        //        },
+        //        null
+        //    );
+        //}
+
+        //private void FlipOutAnimation(UIView view, double duration = 0.5)
+        //{
+
+        //    FixToStart(view, duration);
+
+        //    view.AddSubview(_previousContentView);
+
+        //    var m34 = (nfloat)(-1 * 0.001);
+        //    var initialTransform = CATransform3D.Identity;
+        //    initialTransform.M34 = m34;
+
+        //    view.Subviews[1].Layer.Opacity = 0;
+        //    _previousContentView.Layer.Transform = initialTransform;
+        //    _previousContentView.Layer.ZPosition = 999;
+        //    _previousContentView.Layer.AnchorPoint = new CGPoint(.5f, .5f);
+
+        //    UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
+        //        () =>
+        //        {
+        //            var newTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, -1.0f, 0.0f);
+        //            newTransform.M34 = m34;
+        //            _previousContentView.Layer.Transform = newTransform;
+        //            view.Subviews[1].Layer.Opacity = 1;
+
+        //        },
+        //        () =>
+        //        {
+        //            _previousContentView.RemoveFromSuperview();
+        //        }
+        //    );
+        //}
+
+        private void CustomNextPageAnimation(UIView view, CustomConfig config)
         {
-            if (input == InputType.In)
-            {
-                switch (transition)
+
+            FixToStart(view, config.Duration);
+
+            view.Layer.Opacity = (float)config.OpacityStart;
+            view.Subviews[0].Transform = CGAffineTransform.MakeWithComponents(
+                new CoreFoundation.CGAffineTransformComponents()
                 {
-                    case TransitionType.SlideBottom:
-                        SlideInAnimation(view, Config.Duration, 0, (float)View.Bounds.Height);
-                        break;
-                    case TransitionType.SlideLeft:
-                        SlideInAnimation(view, Config.Duration, -(float)View.Bounds.Width, 0);
-                        break;
-                    case TransitionType.SlideRight:
-                        SlideInAnimation(view, Config.Duration, (float)View.Bounds.Width, 0);
-                        break;
-                    case TransitionType.SlideTop:
-                        SlideInAnimation(view, Config.Duration, 0, -(float)View.Bounds.Height);
-                        break;
-                }
-            }
-            else if (input == InputType.Out)
-            {
-                switch (transition)
-                {
-                    case TransitionType.SlideBottom:
-                        SlideOutAnimation(view, Config.Duration, 0, (float)View.Bounds.Height);
-                        break;
-                    case TransitionType.SlideLeft:
-                        SlideOutAnimation(view, Config.Duration, -(float)View.Bounds.Width, 0);
-                        break;
-                    case TransitionType.SlideRight:
-                        SlideOutAnimation(view, Config.Duration, (float)View.Bounds.Width, 0);
-                        break;
-                    case TransitionType.SlideTop:
-                        SlideOutAnimation(view, Config.Duration, 0, -(float)View.Bounds.Height);
-                        break;
-                }
-            }
-
-        }
-
-        private void SlideInAnimation(UIView view, double duration = 0.5, float pX = 0, float pY = 0)
-        {
-            FixToStart(view, duration);
-
-            view.Subviews[0].Transform = CGAffineTransform.MakeTranslation(pX, pY);
+                    Scale = new CGSize((float)config.ScaleStart, (float)config.ScaleStart),
+                    Translation = new CGVector(PosX(config.XStart), PosY(config.YStart)),
+                    Rotation = PosRotation(config.RotationStart)
+                });
             view.Subviews[1].Layer.Opacity = 0;
 
-            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
+            UIView.Animate(config.Duration, 0, UIViewAnimationOptions.CurveEaseInOut,
                 () =>
                 {
-                    view.Subviews[0].Transform = CGAffineTransform.MakeTranslation(0, 0);
+                    view.Subviews[0].Transform = CGAffineTransform.MakeWithComponents(
+                        new CoreFoundation.CGAffineTransformComponents()
+                        {
+                            Scale = new CGSize((float)config.ScaleEnd, (float)config.ScaleEnd),
+                            Translation = new CGVector(PosX(config.XEnd), PosY(config.YEnd)),
+                            Rotation = PosRotation(config.RotationEnd)
+                        });
+                    view.Layer.Opacity = (float)config.OpacityEnd;
                     view.Subviews[1].Layer.Opacity = 1;
-                },
-                null
+                }, null
             );
+
+
         }
 
-        private void SlideOutAnimation(UIView view, double duration = 0.5, float pX = 0, float pY = 0)
-        {
-            FixToStart(view, duration);
-
-            view.AddSubview(_previousContentView);
-
-            _previousContentView.Transform = CGAffineTransform.MakeTranslation(0, 0);
-            view.Subviews[1].Layer.Opacity = 0;
-
-            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
-                () =>
-                {
-                    _previousContentView.Transform = CGAffineTransform.MakeTranslation(pX, pY);
-                    view.Subviews[1].Layer.Opacity = 1;
-                },
-                () =>
-                {
-                    _previousContentView.RemoveFromSuperview();
-                }
-            );
-        }
-
-        private void FlipInAnimation(UIView view, double duration = 0.5)
-        {
-
-            FixToStart(view, duration);
-
-            var m34 = (nfloat)(-1 * 0.001);
-            var initialTransform = CATransform3D.Identity;
-            initialTransform.M34 = m34;
-            initialTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, 1.0f, 0.0f);
-
-            view.Subviews[0].Layer.Transform = initialTransform;
-            //view.Subviews[1].Layer.Opacity = 0;
-            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
-                () =>
-                {
-                    view.Subviews[0].Layer.AnchorPoint = new CGPoint(.5f, 0.5f);
-                    var newTransform = CATransform3D.Identity;
-                    newTransform.M34 = m34;
-                    view.Subviews[0].Layer.Transform = newTransform;
-                    //view.Subviews[1].Layer.Opacity = 1;
-                },
-                null
-            );
-        }
-
-        private void FlipOutAnimation(UIView view, double duration = 0.5)
-        {
-
-            FixToStart(view, duration);
-
-            view.AddSubview(_previousContentView);
-
-            var m34 = (nfloat)(-1 * 0.001);
-            var initialTransform = CATransform3D.Identity;
-            initialTransform.M34 = m34;
-
-            view.Subviews[1].Layer.Opacity = 0;
-            _previousContentView.Layer.Transform = initialTransform;
-            _previousContentView.Layer.ZPosition = 999;
-            _previousContentView.Layer.AnchorPoint = new CGPoint(.5f, .5f);
-
-            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
-                () =>
-                {
-                    var newTransform = initialTransform.Rotate((nfloat)(1 * Math.PI * 0.5), 0.0f, -1.0f, 0.0f);
-                    newTransform.M34 = m34;
-                    _previousContentView.Layer.Transform = newTransform;
-                    view.Subviews[1].Layer.Opacity = 1;
-
-                },
-                () =>
-                {
-                    _previousContentView.RemoveFromSuperview();
-                }
-            );
-        }
-
-        private void ScaleInAnimation(UIView view, double duration = 0.5)
-        {
-
-            FixToStart(view, duration);
-
-            view.Layer.Opacity = 0;
-            view.Subviews[0].Transform = CGAffineTransform.MakeScale((nfloat)1.5, (nfloat)1.5);
-            view.Subviews[1].Layer.Opacity = 0;
-
-            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
-                () =>
-                {
-                    view.Subviews[0].Transform = CGAffineTransform.MakeScale((nfloat)1, (nfloat)1);
-                    view.Subviews[1].Layer.Opacity = 1;
-                    view.Layer.Opacity = 1;
-                },
-                null
-            );
-        }
-
-        private void ScaleOutAnimation(UIView view, double duration = 0.5)
-        {
-
-            FixToStart(view, duration);
-
-            view.AddSubview(_previousContentView);
-            _previousContentView.Layer.Opacity = 1;
-            _previousContentView.Transform = CGAffineTransform.MakeScale(1f, 1f);
-            view.Subviews[1].Layer.Opacity = 0;
-            UIView.Animate(duration, 0, UIViewAnimationOptions.CurveEaseInOut,
-                () =>
-                {
-                    _previousContentView.Transform = CGAffineTransform.MakeScale(1.5f, 1.5f);
-                    _previousContentView.Layer.Opacity = 0;
-                    view.Subviews[1].Layer.Opacity = 1;
-                },
-                () =>
-                {
-                    _previousContentView.RemoveFromSuperview();
-                }
-            );
-        }
-
-        private void CustomAnimation(UIView view, CustomConfig config)
+        private void CustomCurrentPageAnimation(UIView view, CustomConfig config)
         {
 
             if (_previousContentView == null) return;
-            System.Diagnostics.Debug.WriteLine(":::::");
+
             FixToStart(view, config.Duration);
             view.AddSubview(_previousContentView);
             _previousContentView.Layer.Opacity = (float)config.OpacityStart;
@@ -313,8 +163,8 @@ namespace Plugins.CNPM.Platforms.iOS
                 new CoreFoundation.CGAffineTransformComponents()
                 {
                     Scale = new CGSize((float)config.ScaleStart, (float)config.ScaleStart),
-                    Translation = new CGVector(PosX(config.XStart), PosX(config.YStart)),
-                    Rotation = 0
+                    Translation = new CGVector(PosX(config.XStart), PosY(config.YStart)),
+                    Rotation = PosRotation(config.RotationStart)
                 });
             view.Subviews[1].Layer.Opacity = 0;
 
@@ -325,10 +175,9 @@ namespace Plugins.CNPM.Platforms.iOS
                     _previousContentView.Transform = CGAffineTransform.MakeWithComponents(new CoreFoundation.CGAffineTransformComponents()
                     {
                         Scale = new CGSize((float)config.ScaleEnd, (float)config.ScaleEnd),
-                        Translation = new CGVector(PosX(config.XEnd), PosX(config.YEnd)),
-                        Rotation = 360
+                        Translation = new CGVector(PosX(config.XEnd), PosY(config.YEnd)),
+                        Rotation = PosRotation(config.RotationEnd)
                     });
-                    //_previousContentView.Layer.Opacity = 0;
                     _previousContentView.Layer.Opacity = (float)config.OpacityEnd;
                     view.Subviews[1].Layer.Opacity = 1;
                 },
@@ -392,6 +241,12 @@ namespace Plugins.CNPM.Platforms.iOS
             {
                 _previousContentView = View.SnapshotView(false);
             }
+        }
+
+        private float PosRotation(double value)
+        {
+            float result = (float)(2 * Math.PI * value);
+            return result;
         }
 
         private float PosX(double value)

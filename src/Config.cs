@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace Nav
+namespace Plugins.CNPM
 {
     public static class Config
     {
@@ -18,6 +18,9 @@ namespace Nav
             PopType = TransitionType.Default;
             PopInputType = InputType.Out;
         }
+
+        public static CustomConfig CustomPush { get; set; }
+        public static CustomConfig CustomPop { get; set; }
     }
 
 }

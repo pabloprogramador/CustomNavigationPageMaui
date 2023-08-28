@@ -10,77 +10,55 @@ using Microsoft.Maui.Platform;
 using Microsoft.Maui.Controls;
 using Foundation;
 using CoreAudioKit;
-//using Xamarin.Forms;
-//using Xamarin.Forms.Platform.iOS;
+using Plugins.CNPM;
 
-namespace src.Platforms.iOS
+namespace Plugins.CNPM.Platforms.iOS
 {
 
     public class CustomNavigationPageMauiRender : NavigationRenderer
     {
         private UIView _previousContentView;
+        private bool _isPush;
 
         public override void PushViewController(UIViewController viewController, bool animated)
         {
-            var mainPage = Application.Current.MainPage;
+            _isPush = true;
 
-            bool hasBar = true;
+            PreviousContent();
 
-            if (mainPage is NavigationPage navigationPage)
-            {
-                if (navigationPage.CurrentPage is ContentPage contentPage)
-                {
-                    hasBar = NavigationPage.GetHasNavigationBar(contentPage);
-                }
-            }
-
-            if (hasBar)
-            {
-                _previousContentView = View.Subviews[0].SnapshotView(false);
-            }
-            else
-            {
-                _previousContentView = View.SnapshotView(false);
-            }
-
-            if (Nav.Config.PushType == Nav.TransitionType.None)
+            if (Config.PushType == TransitionType.None)
             {
                 base.PushViewController(viewController, false);
                 return;
             }
-            else if (Nav.Config.PushType == Nav.TransitionType.Default)
+            else if (Config.PushType == TransitionType.Default)
             {
                 base.PushViewController(viewController, animated);
                 return;
             }
-            else if (Nav.Config.PushType == Nav.TransitionType.Fade)
+            else if (Config.PushType == TransitionType.Fade)
             {
-
-                var transition = CATransition.CreateAnimation();
-                transition.Duration = Nav.Config.Duration;
-                transition.Type = CAAnimation.TransitionFade;
-
-                View.Layer.AddAnimation(transition, null);
+                CustomAnimation(View, Config.CustomPush);
             }
-            else if (Nav.Config.PushType == Nav.TransitionType.Flip && Nav.Config.PushInputType == Nav.InputType.In)
+            else if (Config.PushType == TransitionType.Flip && Config.PushInputType == InputType.In)
             {
-                FlipInAnimation(View, Nav.Config.Duration);
+                FlipInAnimation(View, Config.Duration);
             }
-            else if (Nav.Config.PushType == Nav.TransitionType.Flip && Nav.Config.PushInputType == Nav.InputType.Out)
+            else if (Config.PushType == TransitionType.Flip && Config.PushInputType == InputType.Out)
             {
-                FlipOutAnimation(View, Nav.Config.Duration);
+                FlipOutAnimation(View, Config.Duration);
             }
-            else if (Nav.Config.PushType == Nav.TransitionType.Scale && Nav.Config.PushInputType == Nav.InputType.In)
+            else if (Config.PushType == TransitionType.Scale && Config.PushInputType == InputType.In)
             {
-                ScaleInAnimation(View, Nav.Config.Duration);
+                ScaleInAnimation(View, Config.Duration);
             }
-            else if (Nav.Config.PushType == Nav.TransitionType.Scale && Nav.Config.PushInputType == Nav.InputType.Out)
+            else if (Config.PushType == TransitionType.Scale && Config.PushInputType == InputType.Out)
             {
-                ScaleOutAnimation(View, Nav.Config.Duration);
+                ScaleOutAnimation(View, Config.Duration);
             }
             else
             {
-                Slide(View, Nav.Config.PushType, Nav.Config.PushInputType);
+                Slide(View, Config.PushType, Config.PushInputType);
             }
 
             base.PushViewController(viewController, false);
@@ -89,88 +67,95 @@ namespace src.Platforms.iOS
 
         protected override Task<bool> OnPopViewAsync(Page page, bool animated)
         {
+            if (!_isPush)
+            {
+                _isPush = true;
+                return null;
+            }
             PopViewController(animated);
             return null;
         }
 
         public override UIViewController PopViewController(bool animated)
         {
-            _previousContentView = View.Subviews[0].SnapshotView(false);
+            _isPush = false;
+            PreviousContent();
 
-            if (Nav.Config.PopType == Nav.TransitionType.None)
+            if (Config.PopType == TransitionType.None)
             {
                 return base.PopViewController(false);
             }
-            if (Nav.Config.PopType == Nav.TransitionType.Default)
+            if (Config.PopType == TransitionType.Default)
             {
                 return base.PopViewController(animated);
             }
-            if (Nav.Config.PopType == Nav.TransitionType.Fade)
+            if (Config.PopType == TransitionType.Fade)
             {
-                var transition = CATransition.CreateAnimation();
-                transition.Duration = Nav.Config.Duration;
-                transition.Type = CAAnimation.TransitionFade;
-                View.Layer.AddAnimation(transition, null);
+                //var transition = CATransition.CreateAnimation();
+                //transition.Duration = Config.Duration;
+                //transition.Type = CAAnimation.TransitionFade;
+                //View.Layer.AddAnimation(transition, null);
+                CustomAnimation(View, Config.CustomPush);
             }
-            else if (Nav.Config.PopType == Nav.TransitionType.Flip && Nav.Config.PopInputType == Nav.InputType.In)
+            else if (Config.PopType == TransitionType.Flip && Config.PopInputType == InputType.In)
             {
-                FlipInAnimation(View, Nav.Config.Duration);
+                FlipInAnimation(View, Config.Duration);
             }
-            else if (Nav.Config.PopType == Nav.TransitionType.Flip && Nav.Config.PopInputType == Nav.InputType.Out)
+            else if (Config.PopType == TransitionType.Flip && Config.PopInputType == InputType.Out)
             {
-                FlipOutAnimation(View, Nav.Config.Duration);
+                FlipOutAnimation(View, Config.Duration);
             }
-            else if (Nav.Config.PopType == Nav.TransitionType.Scale && Nav.Config.PopInputType == Nav.InputType.In)
+            else if (Config.PopType == TransitionType.Scale && Config.PopInputType == InputType.In)
             {
-                ScaleInAnimation(View, Nav.Config.Duration);
+                ScaleInAnimation(View, Config.Duration);
             }
-            else if (Nav.Config.PopType == Nav.TransitionType.Scale && Nav.Config.PopInputType == Nav.InputType.Out)
+            else if (Config.PopType == TransitionType.Scale && Config.PopInputType == InputType.Out)
             {
-                ScaleOutAnimation(View, Nav.Config.Duration);
+                ScaleOutAnimation(View, Config.Duration);
             }
             else
             {
-                Slide(View, Nav.Config.PopType, Nav.Config.PopInputType);
+                Slide(View, Config.PopType, Config.PopInputType);
             }
 
             return base.PopViewController(false);
         }
 
-        private void Slide(UIView view, Nav.TransitionType transition, Nav.InputType input)
+        private void Slide(UIView view, TransitionType transition, InputType input)
         {
-            if (input == Nav.InputType.In)
+            if (input == InputType.In)
             {
                 switch (transition)
                 {
-                    case Nav.TransitionType.SlideBottom:
-                        SlideInAnimation(view, Nav.Config.Duration, 0, (float)View.Bounds.Height);
+                    case TransitionType.SlideBottom:
+                        SlideInAnimation(view, Config.Duration, 0, (float)View.Bounds.Height);
                         break;
-                    case Nav.TransitionType.SlideLeft:
-                        SlideInAnimation(view, Nav.Config.Duration, -(float)View.Bounds.Width, 0);
+                    case TransitionType.SlideLeft:
+                        SlideInAnimation(view, Config.Duration, -(float)View.Bounds.Width, 0);
                         break;
-                    case Nav.TransitionType.SlideRight:
-                        SlideInAnimation(view, Nav.Config.Duration, (float)View.Bounds.Width, 0);
+                    case TransitionType.SlideRight:
+                        SlideInAnimation(view, Config.Duration, (float)View.Bounds.Width, 0);
                         break;
-                    case Nav.TransitionType.SlideTop:
-                        SlideInAnimation(view, Nav.Config.Duration, 0, -(float)View.Bounds.Height);
+                    case TransitionType.SlideTop:
+                        SlideInAnimation(view, Config.Duration, 0, -(float)View.Bounds.Height);
                         break;
                 }
             }
-            else if (input == Nav.InputType.Out)
+            else if (input == InputType.Out)
             {
                 switch (transition)
                 {
-                    case Nav.TransitionType.SlideBottom:
-                        SlideOutAnimation(view, Nav.Config.Duration, 0, (float)View.Bounds.Height);
+                    case TransitionType.SlideBottom:
+                        SlideOutAnimation(view, Config.Duration, 0, (float)View.Bounds.Height);
                         break;
-                    case Nav.TransitionType.SlideLeft:
-                        SlideOutAnimation(view, Nav.Config.Duration, -(float)View.Bounds.Width, 0);
+                    case TransitionType.SlideLeft:
+                        SlideOutAnimation(view, Config.Duration, -(float)View.Bounds.Width, 0);
                         break;
-                    case Nav.TransitionType.SlideRight:
-                        SlideOutAnimation(view, Nav.Config.Duration, (float)View.Bounds.Width, 0);
+                    case TransitionType.SlideRight:
+                        SlideOutAnimation(view, Config.Duration, (float)View.Bounds.Width, 0);
                         break;
-                    case Nav.TransitionType.SlideTop:
-                        SlideOutAnimation(view, Nav.Config.Duration, 0, -(float)View.Bounds.Height);
+                    case TransitionType.SlideTop:
+                        SlideOutAnimation(view, Config.Duration, 0, -(float)View.Bounds.Height);
                         break;
                 }
             }
@@ -316,6 +301,52 @@ namespace src.Platforms.iOS
             );
         }
 
+        private void CustomAnimation(UIView view, CustomConfig config)
+        {
+
+            if (_previousContentView == null) return;
+            System.Diagnostics.Debug.WriteLine(":::::");
+            FixToStart(view, config.Duration);
+            view.AddSubview(_previousContentView);
+            _previousContentView.Layer.Opacity = (float)config.OpacityStart;
+            _previousContentView.Transform = CGAffineTransform.MakeWithComponents(
+                new CoreFoundation.CGAffineTransformComponents()
+                {
+                    Scale = new CGSize((float)config.ScaleStart, (float)config.ScaleStart),
+                    Translation = new CGVector(PosX(config.XStart), PosX(config.YStart)),
+                    Rotation = 0
+                });
+            view.Subviews[1].Layer.Opacity = 0;
+
+
+            UIView.Animate(config.Duration, 0, UIViewAnimationOptions.CurveEaseInOut,
+                () =>
+                {
+                    _previousContentView.Transform = CGAffineTransform.MakeWithComponents(new CoreFoundation.CGAffineTransformComponents()
+                    {
+                        Scale = new CGSize((float)config.ScaleEnd, (float)config.ScaleEnd),
+                        Translation = new CGVector(PosX(config.XEnd), PosX(config.YEnd)),
+                        Rotation = 360
+                    });
+                    //_previousContentView.Layer.Opacity = 0;
+                    _previousContentView.Layer.Opacity = (float)config.OpacityEnd;
+                    view.Subviews[1].Layer.Opacity = 1;
+                },
+                () =>
+                {
+                    if (_previousContentView != null)
+                    {
+                        _previousContentView.Layer.RemoveAllAnimations();
+                        _previousContentView.RemoveFromSuperview();
+                    }
+                    _previousContentView = null;
+                }
+            );
+
+
+        }
+
+
         private void FixToStart(UIView view, double duration = 0.5)
         {
             var transition = CATransition.CreateAnimation();
@@ -338,6 +369,41 @@ namespace src.Platforms.iOS
                 view.Layer.Transform = CATransform3D.MakeTranslation(0, 0, 0);
             };
             view.Layer.AddAnimation(fixAnimation, null);
+        }
+
+        private void PreviousContent()
+        {
+            bool hasBar = true;
+            var mainPage = Application.Current.MainPage;
+
+            if (mainPage is NavigationPage navigationPage)
+            {
+                if (navigationPage.CurrentPage is ContentPage contentPage)
+                {
+                    hasBar = NavigationPage.GetHasNavigationBar(contentPage);
+                }
+            }
+
+            if (hasBar)
+            {
+                _previousContentView = View.Subviews[0].SnapshotView(false);
+            }
+            else
+            {
+                _previousContentView = View.SnapshotView(false);
+            }
+        }
+
+        private float PosX(double value)
+        {
+            float result = (float)(View.Bounds.Width * value);
+            return result;
+        }
+
+        private float PosY(double value)
+        {
+            float result = (float)(View.Bounds.Height * value);
+            return result;
         }
 
     }

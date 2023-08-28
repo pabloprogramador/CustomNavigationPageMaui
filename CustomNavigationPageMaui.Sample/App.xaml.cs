@@ -1,4 +1,5 @@
-﻿namespace CustomNavigationPageMaui.Sample;
+﻿using Plugins.CNPM;
+namespace CustomNavigationPageMaui.Sample;
 
 public partial class App : Application
 {
@@ -6,7 +7,7 @@ public partial class App : Application
 	{
 		InitializeComponent();
 
-		MainPage = new NavigationPage(new Pages.MainPage());
+		MainPage = new Plugins.CNPM.CustomNavigationPageMaui(new Pages.MainPage());
 
 	}
 }

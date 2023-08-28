@@ -1,5 +1,5 @@
 ﻿using Microsoft.Extensions.Logging;
-
+using Plugins.CNPM;
 
 namespace CustomNavigationPageMaui.Sample;
 

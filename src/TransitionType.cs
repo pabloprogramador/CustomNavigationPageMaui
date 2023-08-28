@@ -1,5 +1,5 @@
 ﻿using System;
-namespace Nav
+namespace Plugins.CNPM
 {
     public enum TransitionType
     {

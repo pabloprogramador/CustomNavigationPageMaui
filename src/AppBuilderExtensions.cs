@@ -1,4 +1,5 @@
-﻿public static class AppBuilderExtensions
+﻿namespace Plugins.CNPM;
+public static class AppBuilderExtensions
 {
 
     public static MauiAppBuilder UseCustomNavigationPageMaui(this MauiAppBuilder builder)
@@ -8,7 +9,7 @@
 #if ANDROID
                // handlers.AddHandler(typeof(NavigationPage), typeof(XamarinCustomRenderer.Droid.Renderers.PressableViewRenderer));
 #elif IOS
-                handlers.AddHandler(typeof(NavigationPage), typeof(src.Platforms.iOS.CustomNavigationPageMauiRender));
+                handlers.AddHandler(typeof(CustomNavigationPageMaui), typeof(Platforms.iOS.CustomNavigationPageMauiRender));
 #endif
          });
         return builder;

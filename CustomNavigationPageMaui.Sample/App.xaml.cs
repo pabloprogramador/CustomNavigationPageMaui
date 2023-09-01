@@ -7,8 +7,11 @@ public partial class App : Application
 	{
 		InitializeComponent();
 
-		MainPage = new Plugins.CNPM.CustomNavigationPageMaui(new Pages.MainPage());
+		//MainPage = new NavigationPage(new Pages.MainPage());
 
+		//MainPage = new Plugins.CNPM.CustomNavigationPageMaui(new Pages.MainPage());
+
+		MainPage = new AppShell();
 	}
 }
 

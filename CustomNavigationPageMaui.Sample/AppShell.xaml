@@ -1,0 +1,44 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<Shell
+    x:Class="CustomNavigationPageMaui.Sample.AppShell"
+    xmlns="http://schemas.microsoft.com/dotnet/2021/maui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2009/xaml"
+	xmlns:local="clr-namespace:CustomNavigationPageMaui.Sample.Pages"
+    FlyoutBehavior="Flyout">
+
+	
+		 <ShellContent
+        ContentTemplate="{DataTemplate local:MainPage}"
+        Route="MainPage" Title="Home"
+         />
+
+	 <ShellContent
+        ContentTemplate="{DataTemplate local:NewPage1}"
+        Route="NewPage1" Title="page 1"
+         />
+
+	 <ShellContent
+        ContentTemplate="{DataTemplate local:NewPage2}"
+        Route="NewPage2" Title="page 2"
+         />
+
+	 <ShellContent
+        ContentTemplate="{DataTemplate local:NewPage3}"
+        Route="NewPage3" Title="page 3"
+         />
+
+   
+		<Tab Title="Tab1" Icon="dotnet_bot.png">
+			<ShellContent
+				Title="Page1"
+				ContentTemplate="{DataTemplate local:NewPage1}"
+				Route="Page1" />
+		</Tab>
+		<Tab Title="Tab2" Icon="dotnet_bot.png">
+			<ShellContent
+				Title="Page2"
+				ContentTemplate="{DataTemplate local:NewPage2}"
+				Route="Page2" />
+		</Tab>
+	
+</Shell>

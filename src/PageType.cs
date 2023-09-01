@@ -2,7 +2,7 @@
 using System;
 namespace Plugins.CNPM
 {
-	public enum ScreenType
+	public enum PageType
 	{
 		CurrentPage, NextPage
 	}

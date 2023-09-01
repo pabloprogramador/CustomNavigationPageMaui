@@ -12,9 +12,24 @@ using Foundation;
 using CoreAudioKit;
 using Plugins.CNPM;
 using System.Runtime.InteropServices;
+using Microsoft.Maui.Controls.PlatformConfiguration;
+using ObjCRuntime;
 
 namespace Plugins.CNPM.Platforms.iOS
 {
+    //public class Teste : ShellRenderer
+    //{
+    //    public Teste()
+    //    {
+
+    //    }
+
+    //    public override void Transition(UIViewController fromViewController, UIViewController toViewController, double duration, UIViewAnimationOptions options, [BlockProxy(typeof(NIDAction))] Action animations, [BlockProxy(typeof(NIDUICompletionHandler))] UICompletionHandler completionHandler)
+    //    {
+            
+    //        base.Transition(fromViewController, toViewController, duration, options, animations, completionHandler);
+    //    }
+    //}
 
     public class CustomNavigationPageMauiRender : NavigationRenderer
     {
@@ -27,10 +42,10 @@ namespace Plugins.CNPM.Platforms.iOS
 
             PreviousContent();
 
-            if (Config.CustomPush.SelectedForAnimation == ScreenType.CurrentPage)
+            if (Config.CustomPush.AnimationPage == PageType.CurrentPage)
                 CustomCurrentPageAnimation(View, Config.CustomPush);
 
-            if (Config.CustomPush.SelectedForAnimation == ScreenType.NextPage)
+            if (Config.CustomPush.AnimationPage == PageType.NextPage)
                 CustomNextPageAnimation(View, Config.CustomPush);
 
             base.PushViewController(viewController, false);
@@ -53,10 +68,10 @@ namespace Plugins.CNPM.Platforms.iOS
             _isPush = false;
             PreviousContent();
 
-            if (Config.CustomPop.SelectedForAnimation == ScreenType.CurrentPage)
+            if (Config.CustomPop.AnimationPage == PageType.CurrentPage)
                 CustomCurrentPageAnimation(View, Config.CustomPop);
 
-            if (Config.CustomPop.SelectedForAnimation == ScreenType.NextPage)
+            if (Config.CustomPop.AnimationPage == PageType.NextPage)
                 CustomNextPageAnimation(View, Config.CustomPop);
 
             return base.PopViewController(false);

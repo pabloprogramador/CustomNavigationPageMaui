@@ -26,8 +26,7 @@ namespace Plugins.CNPM.Platforms.iOS
 
         protected override IShellSectionRenderer CreateShellSectionRenderer(ShellSection shellSection)
         {
-            //return base.CreateShellSectionRenderer(shellSection);
-            return new CustomShellSectionRenderer((IShellContext)shellSection);
+            return new CustomShellSectionRenderer(this);
         }
 
     }

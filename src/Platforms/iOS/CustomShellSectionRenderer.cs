@@ -13,10 +13,11 @@ namespace Plugins.CNPM.Platforms.iOS
 
         public override void PushViewController(UIViewController viewController, bool animated)
         {
-            //var transition = CATransition.CreateAnimation();
-            //transition.Duration = 0.5f;
-            //transition.Type = CAAnimation.TransitionFromBottom;
-            //View.Layer.AddAnimation(transition, null);
+            var transition = CATransition.CreateAnimation();
+            transition.Duration = 0.5f;
+            transition.Type = CAAnimation.TransitionPush;
+            transition.Subtype = CAAnimation.TransitionFromBottom;
+            View.Layer.AddAnimation(transition, null);
             base.PushViewController(viewController, false);
         }
     }

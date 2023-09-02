@@ -1,6 +1,4 @@
-﻿using Android.Content.Res;
-using Microsoft.Extensions.Logging;
-using Microsoft.Maui.Controls.Compatibility.Platform.Android;
+﻿using Microsoft.Extensions.Logging;
 using Plugins.CNPM;
 
 namespace CustomNavigationPageMaui.Sample;
@@ -13,10 +11,12 @@ public static class MauiProgram
 		builder
 			.UseMauiApp<App>()
             .UseCustomNavigationPageMaui()
-            .ConfigureMauiHandlers(handlers =>
-            {
-                handlers.AddHandler<Shell, Plugins.CNPM.Platforms.Android.CustomShellRenderer>();
-            })
+            //.ConfigureMauiHandlers(handlers =>
+            //{
+
+            //    handlers.AddHandler<Shell, Plugins.CNPM.Platforms.Android.CustomShellRenderer>();
+
+            //})
             .ConfigureFonts(fonts =>
 			{
 				fonts.AddFont("OpenSans-Regular.ttf", "OpenSansRegular");

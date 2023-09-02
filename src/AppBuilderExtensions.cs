@@ -8,10 +8,12 @@ public static class AppBuilderExtensions
         builder.ConfigureMauiHandlers((handlers) =>
          {
 #if ANDROID
-                handlers.AddHandler(typeof(CustomNavigationPageMaui), typeof(Platforms.Android.CustomNavigationPageMauiHandler));
-             
+             handlers.AddHandler<Shell, Plugins.CNPM.Platforms.Android.CustomShellRenderer>();
+             //handlers.AddHandler(typeof(CustomNavigationPageMaui), typeof(Platforms.Android.CustomNavigationPageMauiHandler));
+
 #elif IOS
-                handlers.AddHandler(typeof(CustomNavigationPageMaui), typeof(Platforms.iOS.CustomNavigationPageMauiRender));
+             //handlers.AddHandler(typeof(CustomNavigationPageMaui), typeof(Platforms.iOS.CustomNavigationPageMauiRender));
+             handlers.AddHandler<Shell, Plugins.CNPM.Platforms.iOS.CustomShellRenderer>();
 #endif
          });
         return builder;

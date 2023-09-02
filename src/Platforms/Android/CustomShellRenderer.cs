@@ -43,9 +43,9 @@ namespace Plugins.CNPM.Platforms.Android
 
 
             if (animate)
-                //transaction.SetTransition(Microsoft.Maui.Controls.Resource.Animation.enterfromleft);
+                transaction.SetTransition(Microsoft.Maui.Controls.Resource.Animation.enterfromleft);
                 //transaction.SetTransition((int)global::Android.App.FragmentTransit.FragmentClose);
-                transaction.SetCustomAnimations(Microsoft.Maui.Controls.Resource.Animation.enterfromleft, Microsoft.Maui.Controls.Resource.Animation.ent);
+                //transaction.SetCustomAnimations(Microsoft.Maui.Controls.Resource.Animation.enterfromleft, Microsoft.Maui.Controls.Resource.Animation.ent);
 
                 transaction.Replace(targetView.Id, fragment);
 
